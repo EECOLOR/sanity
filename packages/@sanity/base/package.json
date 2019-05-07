@@ -52,7 +52,6 @@
   },
   "devDependencies": {
     "@sanity/check": "0.140.3",
-    "@sanity/plugin-loader": "0.140.10",
     "babel-jest": "^23.6.0",
     "jest": "^23.6.0",
     "prop-types": "^15.6.0",
