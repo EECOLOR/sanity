@@ -9,6 +9,7 @@ import dataAdapter from './dataAdapter'
 const {urlBuilder, getFeed} = dataAdapter
 
 function createUrl(slug) {
+  console.trace(slug)
   return `https://www.sanity.io/docs/guides/${slug.current}`
 }
 

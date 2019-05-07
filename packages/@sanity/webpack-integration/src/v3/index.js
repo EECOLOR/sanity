@@ -1,9 +1,9 @@
 const postcssImport = require('postcss-import')
 const postcssCssnext = require('postcss-cssnext')
-const PartResolverPlugin = require('@sanity/webpack-loader')
+const PartResolverPlugin = require('../webpack-loader/PartResolverPlugin')
 const resolveStyleImport = require('./resolveStyleImport')
 
-const partLoaderPath = require.resolve('@sanity/webpack-loader/lib/partLoader')
+const partLoaderPath = require.resolve('../webpack-loader/partLoader')
 
 function getPartResolverPlugin(options) {
   return new PartResolverPlugin(options)
