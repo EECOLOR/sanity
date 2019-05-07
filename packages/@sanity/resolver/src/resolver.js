@@ -21,7 +21,7 @@ export function resolveParts(opts = {}) {
 }
 
 function resolveTreeSync(options) {
-  const basePath = options.basePath || process.cwd()
+  const basePath = options.basePath
   const manifest = readManifest(options)
   const plugins = resolvePlugins(manifest.plugins || [], options).concat([
     getProjectRootPlugin(basePath, manifest)
