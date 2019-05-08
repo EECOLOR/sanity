@@ -77,7 +77,6 @@
     "@sanity/cli": "0.140.17",
     "@sanity/components": "0.140.18",
     "@sanity/core": "0.140.18",
-    "@sanity/server": "0.140.12",
     "assert": "^1.4.1",
     "flow-typed": "^2.2.3",
     "in-publish": "^2.0.0",
