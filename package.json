@@ -36,7 +36,7 @@
     "updated": "lerna updated",
     "watch": "gulp watch",
     "install-husky": "node node_modules/husky/bin/install",
-    "commitmsg": "node scripts/validateCommitMessage.js",
+    "disabled-commitmsg": "node scripts/validateCommitMessage.js",
     "release-notes": "node scripts/printReleaseNotesTemplate.js",
     "versions": "node scripts/normalizeDependencyVersions.js",
     "normalize-pkgfields": "node scripts/normalizePackageFields.js",
