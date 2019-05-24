@@ -45,7 +45,7 @@ export default class SelectAsset extends React.Component<Props, State> {
     this.setState({isLoading: true})
     return client.fetch(createQuery(start, end)).then(result => {
       this.setState(prevState => ({
-        isLastPage: result.length === 0,
+        isLastPage: result.length < PER_PAGE,
         assets: prevState.assets.concat(result),
         isLoading: false
       }))
@@ -99,6 +99,9 @@ export default class SelectAsset extends React.Component<Props, State> {
             />
           ))}
         </div>
+        {!isLoading && assets.length === 0 && (
+          <div className={styles.noAssets}>No images found</div>
+        )}
         <div className={styles.loadMore}>
           {!isLastPage && (
             <Button onClick={this.handleFetchNextPage} loading={isLoading}>
