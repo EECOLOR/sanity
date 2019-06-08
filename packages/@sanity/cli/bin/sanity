@@ -26,13 +26,16 @@ if (process.version === 'v8.1.0' || process.version === 'v8.1.1') {
   process.exit(1)
 }
 
+let useDevelopment = false
 try {
-  // Default, unpackaged version for development
-  require('./entry')
-  return
-} catch (err) {
-  // Probably in "production", flow through to pre-packaged
-}
+  require.resolve('./entry')
+  useDevelopment = true
+} catch (e) { /* file does not exist */ }
 
-// Pre-packaged
-require('./sanity-cli')
+if (useDevelopment) {
+  // Unpackaged version for development
+  require('./entry')
+} else {
+  // Pre-packaged
+  require('./sanity-cli')
+}
