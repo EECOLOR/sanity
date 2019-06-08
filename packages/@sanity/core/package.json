@@ -35,6 +35,7 @@
     "@sanity/server": "0.141.5",
     "@sanity/util": "0.141.5",
     "@sanity/uuid": "0.141.5",
+    "@sanity/webpack": "0.140.3",
     "batch-stream-operation": "^1.0.2",
     "chokidar": "^2.0.3",
     "configstore": "^3.0.0",

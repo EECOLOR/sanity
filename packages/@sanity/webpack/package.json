@@ -1,0 +1,38 @@
+{
+  "name": "@sanity/webpack",
+  "version": "0.140.3",
+  "description": "Sanity CLI tool for managing Sanity installations, managing plugins, schemas and datasets",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanity-io/sanity.git"
+  },
+  "keywords": [
+    "sanity",
+    "cms",
+    "headless",
+    "realtime",
+    "content",
+    "webpack"
+  ],
+  "author": "Sanity.io <hello@sanity.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanity-io/sanity/issues"
+  },
+  "homepage": "https://www.sanity.io/",
+  "dependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "@sanity/resolver": "0.140.3",
+    "@sanity/util": "0.140.3",
+    "babel-loader": "^8.0.5",
+    "import-fresh": "^3.0.0",
+    "webpack-node-externals": "^1.7.2",
+    "webpack": "^4.30.0"
+  }
+}

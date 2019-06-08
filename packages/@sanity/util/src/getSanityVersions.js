@@ -1,6 +1,13 @@
 const path = require('path')
 const uniq = require('lodash/uniq')
 const resolveFrom = require('resolve-from')
+/*
+  TODO: DISCUSS:
+
+  there is probably no need anymore to use dynamic require
+
+  import-fresh would probably be good
+*/
 const dynamicRequire = require('./dynamicRequire')
 
 const getSanityVersions = basePath => {
@@ -25,3 +32,20 @@ const getSanityVersions = basePath => {
 }
 
 module.exports = getSanityVersions
+
+// Alternative implementation
+/*
+function getSanityVersions(context) {
+  const { dependencies = {}, devDependencies = {}} = importFresh(path.resolve('package.json'))
+  const allDependencies = [...Object.keys(dependencies), ...Object.keys(devDependencies)]
+  const targetDependencies = allDependencies.filter(x => x.startsWith(`@sanity/`))
+
+  return targetDependencies.reduce(
+    (result, x) => ({
+      ...result,
+      [x]: importFresh(require.resolve(`${x}/package.json`, { paths: [context] })).version
+    }),
+    {}
+  )
+}
+*/
