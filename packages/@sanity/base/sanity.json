@@ -885,6 +885,10 @@
     {
       "implements": "part:@sanity/base/component",
       "path": "styles/variables/story.js"
+    },
+    {
+      "name": "part:@sanity/form-builder/input/legacy-date/schema",
+      "description": "Legacy"
     }
   ]
 }

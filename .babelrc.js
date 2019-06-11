@@ -1,5 +1,14 @@
 /* eslint-disable import/no-commonjs */
 module.exports = {
-  presets: [['@babel/env', require('./packages/@sanity/server/src/configs/babel-env-config')]],
+  presets: [['@babel/env', {
+    targets: {
+      node: '8',
+      chrome: '59',
+      safari: '10',
+      firefox: '56',
+      edge: '14'
+    },
+    modules: 'commonjs'
+  }]],
   plugins: ['lodash', '@babel/plugin-proposal-class-properties'],
 }

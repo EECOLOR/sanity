@@ -69,7 +69,7 @@ function getPartsResourceInfo(request, parts) {
 
   const name = (isSinglePartRequest || isOptionalPartRequest || isAllPartsRequest)
   const part = name && {
-    ...(parts.definitions[name] || throwError(`No part declared with the name '${name}'`)),
+    ...(parts.definitions[name] || throwError(`No part declared with the name '${name}' ('${request}')`)),
     implementations: parts.implementations[name] || [],
   }
   const hasImplementation = part && part.implementations.length
@@ -84,7 +84,7 @@ function getPartsResourceInfo(request, parts) {
       hasImplementation,
       getRequestWithImplementation: () => {
         if (!hasImplementation) throwError(`No implementations available for part '${name}'`)
-        const [implementation] = part.implementations.slice(-1)
+        const [implementation] = part.implementations
         return request.replace(resource, implementation.path)
       }
     }
