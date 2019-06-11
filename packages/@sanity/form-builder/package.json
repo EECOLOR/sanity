@@ -78,7 +78,6 @@
     "@sanity/components": "0.141.5",
     "@sanity/core": "0.141.5",
     "@sanity/plugin-loader": "0.141.5",
-    "@sanity/server": "0.141.5",
     "assert": "^1.4.1",
     "flow-typed": "^2.2.3",
     "in-publish": "^2.0.0",

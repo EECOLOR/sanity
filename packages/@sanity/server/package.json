@@ -41,7 +41,6 @@
     "@babel/register": "^7.4.4",
     "@sanity/css-loader": "^0.28.12",
     "@sanity/resolver": "0.141.5",
-    "@sanity/webpack-integration": "0.141.5",
     "@sanity/webpack-loader": "0.141.5",
     "babel-loader": "^8.0.6",
     "eventsource-polyfill": "^0.9.6",
@@ -60,7 +59,6 @@
     "rxjs": "^6.1.0",
     "style-loader": "^0.20.1",
     "symbol-observable": "^1.2.0",
-    "webpack": "^3.8.1",
     "webpack-dev-middleware": "^2.0.5",
     "webpack-hot-middleware": "^2.17.1"
   },
