@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import fse from 'fs-extra'
 import {isPlainObject} from 'lodash'
 import {promisify} from 'es6-promisify'
-import {getDevServer} from '@sanity/server'
+import { getConfigDefaults, createDevServer } from '@sanity/webpack'
 import getConfig from '@sanity/util/lib/getConfig'
 import chooseDatasetPrompt from '../dataset/chooseDatasetPrompt'
 import {tryInitializePluginConfigs} from '../../actions/config/reinitializePluginConfigs'
@@ -23,14 +23,7 @@ export default async (args, context) => {
   const httpHost = flags.host === 'all' ? '0.0.0.0' : flags.host || hostname
   const httpPort = flags.port || port
 
-  const serverOptions = {
-    staticPath: resolveStaticPath(workDir, config),
-    basePath: workDir,
-    httpHost,
-    httpPort,
-    context,
-    project: sanityConfig.get('project')
-  }
+  const configDefaults = getConfigDefaults({ isProduction: false })
 
   checkReactCompatibility(workDir)
 
@@ -39,7 +32,7 @@ export default async (args, context) => {
   await tryInitializePluginConfigs({workDir, output})
   configSpinner.succeed()
 
-  const server = getDevServer(serverOptions)
+  const server = createDevServer(configDefaults)
   const compiler = server.locals.compiler
 
   // "invalid" doesn't mean the bundle is invalid, but that it is *invalidated*,
@@ -57,12 +50,20 @@ export default async (args, context) => {
   }
 
   // Hold off on showing the spinner until compilation has started
-  compiler.plugin('compile', () => resetSpinner())
+  compiler.plugin('run', () => console.log('startAction.run') || resetSpinner())
+  compiler.plugin('watchRun', () => console.log('startAction.watchRun') || resetSpinner())
 
   // "done" event fires when Webpack has finished recompiling the bundle.
   // Whether or not you have warnings or errors, you will get this event.
 
   compiler.plugin('done', stats => {
+    // TODO: DICSUSS
+    // Do we want to add backwards compatibility for part:@sanity/server/initializer?
+    // It is currently only used by @sanity/storybook. The way would do this is by
+    // creating a let variable (some like `firstCompile`). We would add an entry for the node
+    // compiler which calls all initializers and execute it here. After that set `firstCompile`
+    // to false.
+
     if (compileSpinner) {
       compileSpinner.succeed()
     }

@@ -10,12 +10,16 @@
  * that would become possible if we export other methods.
  */
 
+const { createDevServer } = require('./server/createDevServer')
+const { createMultiConfig } = require('./config/multi-config')
 const { createNodeConfig } = require('./config/node-config')
 const { getConfigDefaults } = require('./config/defaults')
 const webpack = require('webpack')
 
  module.exports = {
    nodeConfig: { createNodeConfig },
+   multiConfig: { createMultiConfig },
    webpack,
+   createDevServer,
    getConfigDefaults, // I am not yet sure if '@sanity/webpack' is the best place for this method
- }
+}

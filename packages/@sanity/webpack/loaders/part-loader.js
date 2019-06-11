@@ -8,7 +8,7 @@ module.exports = {
     } = this.query.partsResourceInfo
     const { all_onlyDefaultWhenEsModule, optional_allowEsModule } = this.query
 
-    const [implementation] = implementations.slice(-1)
+    const [implementation] = implementations
 
     // make sure any loaders are executed
     const r = implementation => remainingRequest.replace(resource, implementation)

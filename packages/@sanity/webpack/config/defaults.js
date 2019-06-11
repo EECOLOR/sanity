@@ -4,7 +4,7 @@ const path = require('path')
 const importFresh = require('import-fresh')
 const resolver = require('@sanity/resolver')
 
-const { SANITY_ENV, STUDIO_BASEPATH } = process.env
+const { SANITY_ENV, STUDIO_BASEPATH, BUNDLE_ENV = 'development' } = process.env
 
 module.exports = {
   getConfigDefaults
@@ -29,8 +29,9 @@ function getConfigDefaults({ isProduction }) {
   const configEnv = SANITY_ENV || (isProduction ? 'production' : process.env.NODE_ENV)
 
   return {
+    isProduction,
     context,
-    ouputPath: path.resolve(context, 'dist'),
+    outputPath: path.resolve(context, 'dist'),
     // TODO: DISCUSS
     // originaly some assets were given a /static public path, now everything lives in the same
     // directory
@@ -47,6 +48,7 @@ function getConfigDefaults({ isProduction }) {
         env: configEnv,
         useCompiledPaths: isProduction
       })
-    }
+    },
+    bundleIsDev: !isProduction && (BUNDLE_ENV === 'development'),
   }
 }

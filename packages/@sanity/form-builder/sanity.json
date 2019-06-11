@@ -40,6 +40,10 @@
       "description": "Input component for the core email type"
     },
     {
+      "name": "part:@sanity/form-builder/input/datetime",
+      "description": "Input component for the core datetime type"
+    },
+    {
       "name": "part:@sanity/form-builder/input/geopoint",
       "description": "Input component for the core geopoint type"
     },
