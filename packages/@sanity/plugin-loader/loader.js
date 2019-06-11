@@ -1,3 +1,5 @@
+throw new Error('why am I (plugin-loader) loaded?')
+
 const path = require('path')
 const Module = require('module')
 const interopRequire = require('interop-require')
