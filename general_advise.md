@@ -17,3 +17,7 @@ These are things I need to discuss with the sanity team. These are just notes fo
 - Specify a clear interface to the outside world in packages (a main file that exposes the interface)
 - Do not use babelrc style files, it complicates things. It's in most cases better to supply the
   config directly to the babel loader / plugin.
+- Don't use css variables. If you think about it, it does not make sense in a module based system, if
+  you think about it more, it's very hard to polyfill. Declaring a :root or :global variable could be
+  done, but if it was in a browser that supported it, you would use it only in your toplevel css file.
+  Scoped variables are quite impossible because it's required to know the html structure as they cascade.

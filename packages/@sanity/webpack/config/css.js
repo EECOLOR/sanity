@@ -11,16 +11,20 @@ function createCssConfig({ isProduction }) {
         test: /\.css\?/,
         exclude: /node_modules/,
         resourceQuery: /raw/,
-        use: 'url-loader',
+        use: 'file-loader',
       },
       {
-        test: /\.css$/,
-        include: /node_modules/,
-        use: 'url-loader',
-      },
-      {
-        test: /\.css$/,
-        exclude: /node_modules/,
+        resource: {
+          and: [
+            { test: /\.css(\?|$)/ },
+            {
+              or: [
+                { exclude: /node_modules/ }, // TODO: DISCUSS packages@sanity is only save if they are compiled using the same webpack config
+                { include: /(@sanity\/|sanity-plugin)/ },
+              ]
+            }
+          ]
+        },
         use: [
           { loader: ExtractCssChunks.loader, options: { hmr: !isProduction } },
           {
@@ -35,7 +39,12 @@ function createCssConfig({ isProduction }) {
               plugins: loaderContext => {
                 const resolve = PartsPlugin.getResolve(loaderContext)
                 return [
-                  require('postcss-import')({ resolve: (file, context) => resolve(context, file) }),
+                  require('postcss-import')({
+                    resolve: (file, context) => resolve(context, file),
+                    load: file => new Promise((resolve, reject) => {
+                      loaderContext.fs.readFile(file, (e, x) => e ? reject(e) : resolve(x.toString('utf-8')))
+                    }),
+                  }),
                   require('../postcss-plugins/css-tweaks')(),
                   require('postcss-preset-env')({
                     features: {
@@ -59,7 +68,11 @@ function createCssConfig({ isProduction }) {
            }
           }
         ]
-      }
+      },
+      {
+        test: /\.css$/,
+        use: 'file-loader',
+      },
     ],
     plugins: [
       new ExtractCssChunks({
