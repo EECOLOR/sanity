@@ -1,4 +1,7 @@
-module.exports = { resolveWithoutFile }
+module.exports = {
+  resolveWithoutFile,
+  provideCompilationParam,
+}
 
 function resolveWithoutFile({
   name,
@@ -37,4 +40,31 @@ function resolveWithoutFile({
     if (result.resolveOptions && result.resolveOptions.adjustModuleContext)
       module.context = result.context
   })
+}
+
+function provideCompilationParam({
+  compiler,
+  pluginName,
+  paramName,
+  getParamValue,
+  stage,
+}) {
+
+  compiler.hooks.beforeCompile.tapPromise({ name: pluginName, stage }, provideToCompilationParams)
+  compiler.hooks.compilation.tap(pluginName, provideToChildCompilers)
+
+  async function provideToCompilationParams(params) {
+    if (params[paramName]) return
+    const value = await getParamValue(params)
+    // https://webpack.js.org/api/compiler-hooks/#beforecompile
+    params[paramName] = value
+  }
+
+  function provideToChildCompilers(compilation, { normalModuleFactory, [paramName]: value }) {
+    compilation.hooks.childCompiler.tap(pluginName, (childCompiler, compilerName, compilerIndex) => {
+      childCompiler.hooks.beforeCompile.tap({ name: pluginName, stage: stage - 1 }, params => {
+        params[paramName] = value
+      })
+    })
+  }
 }

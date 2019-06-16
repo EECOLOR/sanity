@@ -1,9 +1,12 @@
-const { partsParamName } = require('./PartsProviderPlugin')
-const { resolveWithoutFile } = require('./utils')
+const { partsParamName, partsParamStage } = require('./PartsProviderPlugin')
+const { resolveWithoutFile, provideCompilationParam } = require('./utils')
 
 const name = 'PartsResolverPlugin'
+const resolveParamName = `${name} - resolve`
+const resolveParamStage = partsParamStage + 1
 
-PartsResolverPlugin.getResolve = getResolve
+PartsResolverPlugin.resolveParamName = resolveParamName
+PartsResolverPlugin.resolveParamStage = resolveParamStage
 module.exports = PartsResolverPlugin
 
 function PartsResolverPlugin({
@@ -12,11 +15,17 @@ function PartsResolverPlugin({
 }) {
   return {
     apply: compiler => {
+      provideCompilationParam({
+        compiler,
+        pluginName: name,
+        paramName: resolveParamName,
+        getParamValue: params => createResolve(compiler, params[partsParamName]),
+        stage: resolveParamStage,
+      })
       compiler.hooks.compilation.tap(name, compilation)
 
       function compilation(compilation, { normalModuleFactory, [partsParamName]: parts }) {
         addPartsResolver(normalModuleFactory, parts, optional_allowEsModule, all_onlyDefaultWhenEsModule)
-        addGetPartsResourceInfoToLoaderContext(compilation, parts)
       }
     }
   }
@@ -40,24 +49,20 @@ function addPartsResolver(normalModuleFactory, parts, optional_allowEsModule, al
   })
 }
 
-function addGetPartsResourceInfoToLoaderContext(compilation, parts) {
-  // this plugin will be moved in webpack v5 (while the documentation states it will be removed...) -> https://github.com/webpack/webpack.js.org/pull/2988
-  compilation.hooks.normalModuleLoader.tap(name, (loaderContext, module) => {
-    loaderContext.getPartsResourceInfo = request => getPartsResourceInfo(request, parts)
+function createResolve(compiler, parts) {
+  const resolver = compiler.resolverFactory.get("normal", {})
+  const resolve = (context, request) => new Promise((resolve, reject) => {
+    resolver.resolve({}, context, request, {}, (e, x) => e ? reject(e) : resolve(x))
   })
-}
 
-function getResolve(loaderContext) {
-  const resolve = loaderContext.getResolve()
-  const { getPartsResourceInfo } = loaderContext
-
-  return async (context, file) => {
-    const { isSinglePartRequest, getRequestWithImplementation } = getPartsResourceInfo(file) || {}
-    const request = isSinglePartRequest ? getRequestWithImplementation() : file
-    return resolve(context, request)
+  return async (context, request) => {
+    const { isSinglePartRequest, getRequestWithImplementation } = getPartsResourceInfo(request, parts) || {}
+    const newRequest = isSinglePartRequest ? getRequestWithImplementation() : request
+    return resolve(context, newRequest)
   }
 }
 
+// this could use some form of caching
 function getPartsResourceInfo(request, parts) {
   const [resource] = request.split('!').slice(-1)
   const isPart = resource.startsWith('part:') && resource

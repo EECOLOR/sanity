@@ -1,6 +1,9 @@
+const { provideCompilationParam } = require('../plugins/utils')
 const ExtractCssChunks = require('mini-css-extract-plugin')
 const PartsPlugin = require('../plugins/PartsPlugin')
 
+const pluginName = 'PostCssPluginsProvider'
+const pluginsParamName = `${pluginName} - plugins`
 
 module.exports = { createCssConfig }
 
@@ -36,35 +39,7 @@ function createCssConfig({ isProduction }) {
             options: {
               config: { path: __dirname },
               sourceMap: true,
-              plugins: loaderContext => {
-                const resolve = PartsPlugin.getResolve(loaderContext)
-                return [
-                  require('postcss-import')({
-                    resolve: (file, context) => resolve(context, file),
-                    load: file => new Promise((resolve, reject) => {
-                      loaderContext.fs.readFile(file, (e, x) => e ? reject(e) : resolve(x.toString('utf-8')))
-                    }),
-                  }),
-                  require('../postcss-plugins/css-tweaks')(),
-                  require('postcss-preset-env')({
-                    features: {
-                      'color-mod-function': true,
-                      'custom-properties': { preserve: false },
-                      'custom-media-queries': true,
-                      'media-query-ranges': true,
-                      'custom-selectors': true,
-                      'nesting-rules': true,
-                      'color-functional-notation': true,
-                      'font-variant-property': true,
-                      'all-property': true,
-                      'any-link-pseudo-class': true,
-                      'matches-pseudo-class': true,
-                      'not-pseudo-class': true,
-                      'overflow-wrap-property': true,
-                    },
-                  })
-               ]
-              }
+              plugins: loaderContext => loaderContext[pluginsParamName],
            }
           }
         ]
@@ -75,9 +50,63 @@ function createCssConfig({ isProduction }) {
       },
     ],
     plugins: [
+      PostCssPluginsProvider(),
       new ExtractCssChunks({
         filename: isProduction ? '[name].[hash].css' : '[name].css' // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/391
       }),
     ]
+  }
+}
+
+function PostCssPluginsProvider() {
+  return {
+    apply: compiler => {
+      provideCompilationParam({
+        compiler,
+        pluginName,
+        paramName: pluginsParamName,
+        getParamValue: getPlugins,
+        stage: PartsPlugin.resolveParamStage + 1,
+      })
+
+      compiler.hooks.compilation.tap(pluginName, addPluginsToLoaderContext)
+
+      function addPluginsToLoaderContext(compilation, params) {
+        // this plugin will be moved in webpack v5 (while the documentation states it will be removed...) -> https://github.com/webpack/webpack.js.org/pull/2988
+        compilation.hooks.normalModuleLoader.tap(pluginName, (loaderContext, module) => {
+          loaderContext[pluginsParamName] = params[pluginsParamName]
+        })
+      }
+
+      function getPlugins(params) {
+        const resolve = params[PartsPlugin.resolveParamName]
+        return [
+          require('postcss-import')({
+            resolve: (file, context) => resolve(context, file),
+            load: file => new Promise((resolve, reject) => {
+              compiler.inputFileSystem.readFile(file, (e, x) => e ? reject(e) : resolve(x.toString('utf-8')))
+            }),
+          }),
+          require('../postcss-plugins/css-tweaks')(),
+          require('postcss-preset-env')({
+            features: {
+              'color-mod-function': true,
+              'custom-properties': { preserve: false },
+              'custom-media-queries': true,
+              'media-query-ranges': true,
+              'custom-selectors': true,
+              'nesting-rules': true,
+              'color-functional-notation': true,
+              'font-variant-property': true,
+              'all-property': true,
+              'any-link-pseudo-class': true,
+              'matches-pseudo-class': true,
+              'not-pseudo-class': true,
+              'overflow-wrap-property': true,
+            },
+          })
+       ]
+      }
+    }
   }
 }

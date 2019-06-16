@@ -3,33 +3,26 @@
  *
  * Use the exported `partsParamName` to access the param in the compilation params.
  */
+const { provideCompilationParam } = require('./utils')
 
 const name = 'PartsProviderPlugin'
 const partsParamName = `${name} - parts`
+const partsParamStage = 0
 
 PartsProviderPlugin.partsParamName = partsParamName
+PartsProviderPlugin.partsParamStage = partsParamStage
 module.exports = PartsProviderPlugin
 
 function PartsProviderPlugin({ loadParts }) {
   return {
     apply: compiler => {
-      compiler.hooks.beforeCompile.tapPromise({ name, stage: 1 }, providePartsToCompilationParams)
-      compiler.hooks.compilation.tap(name, providePartsToChildCompilers)
-
-      async function providePartsToCompilationParams(params) {
-        if (params[partsParamName]) return
-        const parts = await loadParts()
-        // https://webpack.js.org/api/compiler-hooks/#beforecompile
-        params[partsParamName] = parts
-      }
-
-      function providePartsToChildCompilers(compilation, { normalModuleFactory, [partsParamName]: parts }) {
-        compilation.hooks.childCompiler.tap(name, (childCompiler, compilerName, compilerIndex) => {
-          childCompiler.hooks.beforeCompile.tap({ name, stage: 0 }, params => {
-            params[partsParamName] = parts
-          })
-        })
-      }
+      provideCompilationParam({
+        compiler,
+        pluginName: name,
+        paramName: partsParamName,
+        getParamValue: loadParts,
+        stage: partsParamStage,
+      })
     }
   }
 }
