@@ -2,7 +2,10 @@ const PartsProviderPlugin = require('./PartsProviderPlugin')
 const PartsResolverPlugin = require('./PartsResolverPlugin')
 
 PartsPlugin.getResolve = PartsResolverPlugin.getResolve
+PartsPlugin.partsParamName = PartsProviderPlugin.partsParamName
+PartsPlugin.getPartsResourceInfo = PartsResolverPlugin.getPartsResourceInfo
 module.exports = PartsPlugin
+
 
 function PartsPlugin({
   loadParts,

@@ -4,6 +4,7 @@ const { resolveWithoutFile } = require('./utils')
 const name = 'PartsResolverPlugin'
 
 PartsResolverPlugin.getResolve = getResolve
+PartsResolverPlugin.getPartsResourceInfo = getPartsResourceInfo
 module.exports = PartsResolverPlugin
 
 function PartsResolverPlugin({
