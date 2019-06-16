@@ -21,3 +21,7 @@ These are things I need to discuss with the sanity team. These are just notes fo
   you think about it more, it's very hard to polyfill. Declaring a :root or :global variable could be
   done, but if it was in a browser that supported it, you would use it only in your toplevel css file.
   Scoped variables are quite impossible because it's required to know the html structure as they cascade.
+- Switch from lerna to yarn. It's quite hard to figure out why a certain module exists. The `yarn why`
+  command is very valuable. This is helpful with `postcss` related stuff because tricky things happen
+  when you have more than one version of `postcss` active. Also: `yarn upgrade-interactive --latest`
+  really helps with removing some pain keeping libraries up-to-date.
