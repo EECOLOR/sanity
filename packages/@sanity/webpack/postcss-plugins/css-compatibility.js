@@ -5,7 +5,7 @@ const postcss = require('postcss')
 // which developers can update their css
 
 module.exports = postcss.plugin(
-  'css-tweaks',
+  'css-compatibility',
   () => {
     return styles => {
       styles.walkDecls(decl => {

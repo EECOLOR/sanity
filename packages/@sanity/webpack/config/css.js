@@ -87,7 +87,7 @@ function PostCssPluginsProvider() {
               compiler.inputFileSystem.readFile(file, (e, x) => e ? reject(e) : resolve(x.toString('utf-8')))
             }),
           }),
-          require('../postcss-plugins/css-tweaks')(),
+          require('../postcss-plugins/css-compatibility')(),
           require('postcss-preset-env')({
             features: {
               'color-mod-function': true,
