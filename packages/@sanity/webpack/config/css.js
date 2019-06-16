@@ -92,7 +92,7 @@ function PostCssPluginsProvider() {
             features: {
               'color-mod-function': true,
               'custom-properties': { preserve: false },
-              'custom-media-queries': true,
+              'custom-media-queries': { preserve: false },
               'media-query-ranges': true,
               'custom-selectors': true,
               'nesting-rules': true,
