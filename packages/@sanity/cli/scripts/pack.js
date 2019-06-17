@@ -2,7 +2,7 @@
 /* eslint-disable no-console, no-process-exit, no-sync */
 const path = require('path')
 const fse = require('fs-extra')
-const webpack = require('webpack') // TODO: get from @sanity/webpack to prevent version problems during development
+const { webpack } = require('@sanity/webpack')
 const klawSync = require('klaw-sync')
 
 const shebangLoader = require.resolve('./shebang-loader')

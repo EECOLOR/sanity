@@ -32,12 +32,13 @@ export default async (args, context) => {
   await tryInitializePluginConfigs({workDir, output})
   configSpinner.succeed()
 
+  resetSpinner() // dev server starts compiling automatically
   const server = createDevServer(configDefaults)
   const compiler = server.locals.compiler
 
   // "invalid" doesn't mean the bundle is invalid, but that it is *invalidated*,
   // in other words, it's recompiling
-  compiler.plugin('invalid', () => {
+  compiler.hooks.invalid.tap('startAction', () => {
     output.clear()
     resetSpinner()
   })
@@ -49,14 +50,10 @@ export default async (args, context) => {
     gracefulDeath(httpHost, config, err)
   }
 
-  // Hold off on showing the spinner until compilation has started
-  compiler.plugin('run', () => console.log('startAction.run') || resetSpinner())
-  compiler.plugin('watchRun', () => console.log('startAction.watchRun') || resetSpinner())
-
   // "done" event fires when Webpack has finished recompiling the bundle.
   // Whether or not you have warnings or errors, you will get this event.
 
-  compiler.plugin('done', stats => {
+  compiler.hooks.done.tap('startAction', stats => {
     // TODO: DICSUSS
     // Do we want to add backwards compatibility for part:@sanity/server/initializer?
     // It is currently only used by @sanity/storybook. The way would do this is by
