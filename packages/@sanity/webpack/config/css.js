@@ -32,7 +32,12 @@ function createCssConfig({ isProduction }) {
           { loader: ExtractCssChunks.loader, options: { hmr: !isProduction } },
           {
             loader: 'css-loader',
-            options: { modules: true, sourceMap: true, importLoaders: 1 }
+            options: {
+              modules: true,
+              sourceMap: true,
+              importLoaders: 1,
+              localIdentName: isProduction ? '[hash:base64]' : '[folder]-[name]-[local]__[hash:base64:5]',
+            }
           },
           {
             loader: 'postcss-loader',
