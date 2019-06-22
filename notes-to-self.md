@@ -5,3 +5,5 @@
   it is still used in a lot of places, so we need to introduce some form of caching, maybe even our
   own version. As it stands every imported file is parsed by postcss. This is done again and again
   for each import, even if it has been parsed before.
+- Check dependencies, in the pull request you removed some code, it might be that they are still listed
+  as dependencies.

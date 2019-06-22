@@ -13,13 +13,14 @@
 const { createDevServer } = require('./server/createDevServer')
 const { createMultiConfig } = require('./config/multi-config')
 const { createNodeConfig } = require('./config/node-config')
-const { getConfigDefaults } = require('./config/defaults')
+const { getConfigDefaults, getEntryDefaults } = require('./config/defaults')
 const webpack = require('webpack')
 
  module.exports = {
-   nodeConfig: { createNodeConfig },
-   multiConfig: { createMultiConfig },
+   createNodeConfig,
+   createMultiConfig,
    webpack,
    createDevServer,
    getConfigDefaults, // I am not yet sure if '@sanity/webpack' is the best place for this method
+   getEntryDefaults,
 }

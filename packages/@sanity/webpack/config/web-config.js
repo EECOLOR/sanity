@@ -24,6 +24,7 @@ function createWebConfig({
   entry,
   loadParts,
   bundleIsDev,
+  profile = false,
 }) {
   return {
     name: 'web',
@@ -36,6 +37,7 @@ function createWebConfig({
       filename: '[name].[hash].js',
       path: outputPath
     },
+    profile,
     resolve: { alias: createAlias({ context }) },
     optimization: {
       namedChunks: false,
@@ -85,7 +87,7 @@ function createModuleAndPlugins({ loadParts, compatibility, isProduction, config
       new DefinePlugin({
         PARTS_COMPATIBILITY: JSON.stringify(compatibility),
         __DEV__: bundleIsDev,
-        'process.env.NODE_ENV': isProduction ? 'production': process.env.NODE_ENV,
+        'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production': process.env.NODE_ENV),
       }),
       new ContextReplacementPlugin(/moment[/\\]locale$/, /en|nb/),
       new optimize.ModuleConcatenationPlugin(),

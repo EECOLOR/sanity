@@ -1,4 +1,5 @@
 const { createMultiConfig } = require('../config/multi-config')
+const { getEntryDefaults } = require('../config/defaults')
 const express = require('express')
 const importFresh = require('import-fresh')
 const path = require('path')
@@ -25,6 +26,15 @@ function createDevServer({
   const hotReloadEventPath = `${publicPath}__webpack_hmr`
   const hotReloadClient = `webpack-hot-middleware/client?path=${hotReloadEventPath}`
 
+  const { webEntry: { client }, nodeEntry } = getEntryDefaults({ isProduction })
+  const webEntry = {
+    client: [
+      !isProduction && 'react-hot-loader/patch',
+      ...client,
+      !isProduction && hotReloadClient,
+    ].filter(Boolean)
+  }
+
   const multiConfig = createMultiConfig({
     isProduction,
     context,
@@ -34,15 +44,8 @@ function createDevServer({
     compatibility,
     loadParts,
     bundleIsDev,
-    webEntry: {
-      client: [
-        'normalize.css',
-        !isProduction && 'react-hot-loader/patch',
-        require.resolve(`../browser/entry${isProduction ? '' : '-dev'}.js`),
-        !isProduction && hotReloadClient,
-      ].filter(Boolean)
-    },
-    nodeEntry: { ['createIndexHtml']: require.resolve('./createIndexHtml.js') },
+    webEntry,
+    nodeEntry,
   })
 
   const multiCompiler = webpack(multiConfig)

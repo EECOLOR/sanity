@@ -7,13 +7,16 @@ const resolver = require('@sanity/resolver')
 const { SANITY_ENV, STUDIO_BASEPATH, BUNDLE_ENV = 'development' } = process.env
 
 module.exports = {
-  getConfigDefaults
+  getConfigDefaults,
+  getEntryDefaults,
 }
-function getConfigDefaults({ isProduction }) {
+
+function getConfigDefaults({ isProduction, outputPath = undefined }) {
   // TODO: DISCUSS
   // this is not entirely compatible, in the original version the base path and context were mixed
   // where we now make a distinction between context and public path
   const context = process.cwd()
+  outputPath = outputPath || path.resolve(context, 'dist')
 
   const sanityJson = importFresh(require.resolve('sanity.json', { paths: [context] }))
   const { project: { basePath = '/' } = {} } = sanityJson
@@ -26,12 +29,14 @@ function getConfigDefaults({ isProduction }) {
   // Another problem here is that this switches two parts of the configuration:
   // - the api
   // - the env section of sanity.json
+  //
+  // It might be better to separate CONFIG_ENV (see @kaliber/config) and SANITY_ENV
   const configEnv = SANITY_ENV || (isProduction ? 'production' : process.env.NODE_ENV)
 
   return {
     isProduction,
     context,
-    outputPath: path.resolve(context, 'dist'),
+    outputPath,
     // TODO: DISCUSS
     // originaly some assets were given a /static public path, now everything lives in the same
     // directory
@@ -50,5 +55,17 @@ function getConfigDefaults({ isProduction }) {
       })
     },
     bundleIsDev: !isProduction && (BUNDLE_ENV === 'development'),
+  }
+}
+
+function getEntryDefaults({ isProduction }) {
+  return {
+    nodeEntry: { ['createIndexHtml']: require.resolve('../server/createIndexHtml.js') },
+    webEntry: {
+      client: [
+        'normalize.css',
+        require.resolve(`../browser/entry${isProduction ? '' : '-dev'}.js`),
+      ]
+    }
   }
 }

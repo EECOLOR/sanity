@@ -41,6 +41,7 @@ function createNodeConfig({
     resolve: { alias },
     module: { rules: [{ oneOf: js.loaders }] },
     plugins: [
+      // TODO: move plugins that are the same for web and node to a single place
       PartsPlugin({ loadParts, optional_allowEsModule, all_onlyDefaultWhenEsModule }),
       ConfigResolverPlugin({ configEnv }),
       VersionResolverPlugin(),
@@ -48,7 +49,7 @@ function createNodeConfig({
       new DefinePlugin({
         SANITY_PARTS_COMPATIBILITY: JSON.stringify(compatibility),
         __DEV__: bundleIsDev,
-        'process.env.NODE_ENV': isProduction ? 'production': process.env.NODE_ENV,
+        'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production': process.env.NODE_ENV),
       }),
       new ContextReplacementPlugin(/moment[/\\]locale$/, /en|nb/),
       new optimize.ModuleConcatenationPlugin(),

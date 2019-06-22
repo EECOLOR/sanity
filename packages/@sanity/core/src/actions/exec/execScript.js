@@ -1,7 +1,7 @@
 const spawn = require('child_process').spawn
 const path = require('path')
 const fse = require('fs-extra')
-const { webpack, getConfigDefaults, nodeConfig: { createNodeConfig } } = require('@sanity/webpack')
+const { webpack, getConfigDefaults, createNodeConfig } = require('@sanity/webpack')
 
 module.exports = async args => {
   // In case of specifying --with-user-token <file.js>, use the "token" as the script

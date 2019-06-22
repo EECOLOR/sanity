@@ -163,11 +163,6 @@ async function ensureProjectConfig(context) {
   output.print('Project ID / dataset configured')
 }
 
-function resolveStaticPath(rootDir, config) {
-  const {staticPath} = config
-  return path.isAbsolute(staticPath) ? staticPath : path.resolve(path.join(rootDir, staticPath))
-}
-
 function gracefulDeath(httpHost, config, err) {
   if (err.code === 'EADDRINUSE') {
     throw new Error('Port number is already in use, configure `server.port` in `sanity.json`')
