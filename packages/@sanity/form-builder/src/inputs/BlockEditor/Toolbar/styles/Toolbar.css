@@ -81,7 +81,7 @@
   height: 100%;
   width: 2em;
   z-index: 3;
-  background: linear-gradient(90deg, color(var(--component-bg) a(0%) 0%), var(--component-bg) 40%);
+  background: linear-gradient(90deg, color(var(--component-bg) a(0%) a(0%)), var(--component-bg) 40%);
   background-position: 0.5em 0;
   background-repeat: no-repeat;
 

@@ -1,0 +1,26 @@
+/**
+ * This is considered the public API of this package.
+ *
+ * While node allows you to require other files, we do not support you using them. This means that
+ * if those files change their API while the API in this file remains the same it will not be
+ * indicated by a version change.
+ *
+ * So, if you want the comfort of semver (which we will try to implement to the best of our ability)
+ * please only use methods exported from this file. Open an issue on Github if you have a use-case
+ * that would become possible if we export other methods.
+ */
+
+const { createDevServer } = require('./server/createDevServer')
+const { createMultiConfig } = require('./config/multi-config')
+const { createNodeConfig } = require('./config/node-config')
+const { getConfigDefaults, getEntryDefaults } = require('./config/defaults')
+const webpack = require('webpack')
+
+ module.exports = {
+   createNodeConfig,
+   createMultiConfig,
+   webpack,
+   createDevServer,
+   getConfigDefaults, // I am not yet sure if '@sanity/webpack' is the best place for this method
+   getEntryDefaults,
+}

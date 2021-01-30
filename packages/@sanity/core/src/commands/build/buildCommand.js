@@ -1,14 +1,20 @@
 import lazyRequire from '@sanity/util/lib/lazyRequire'
 
-const helpText = `
-Options
+/*
+  TODO: DISCUSS:
+    I think sourcemaps should always be included.
+    As for minify, just don't add NODE_ENV = production (which should be set to get React into
+    production mode).
+
   --source-maps Enable source maps for built bundles (increases size of bundle)
   --no-minify Skip minifying built JavaScript (speeds up build, increases size of bundle)
+*/
+const helpText = `
+Options
   -y, --yes Use unattended mode, accepting defaults and using only flags for choices
 
-Examples
+Example
   sanity build
-  sanity build --no-minify --source-maps
 `
 
 export default {

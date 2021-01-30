@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import fse from 'fs-extra'
 import {isPlainObject} from 'lodash'
 import {promisify} from 'es6-promisify'
-import {getDevServer} from '@sanity/server'
+import { getConfigDefaults, createDevServer } from '@sanity/webpack'
 import getConfig from '@sanity/util/lib/getConfig'
 import chooseDatasetPrompt from '../dataset/chooseDatasetPrompt'
 import {tryInitializePluginConfigs} from '../../actions/config/reinitializePluginConfigs'
@@ -23,14 +23,7 @@ export default async (args, context) => {
   const httpHost = flags.host === 'all' ? '0.0.0.0' : flags.host || hostname
   const httpPort = flags.port || port
 
-  const serverOptions = {
-    staticPath: resolveStaticPath(workDir, config),
-    basePath: workDir,
-    httpHost,
-    httpPort,
-    context,
-    project: sanityConfig.get('project')
-  }
+  const configDefaults = getConfigDefaults({ isProduction: false })
 
   checkReactCompatibility(workDir)
 
@@ -39,12 +32,13 @@ export default async (args, context) => {
   await tryInitializePluginConfigs({workDir, output})
   configSpinner.succeed()
 
-  const server = getDevServer(serverOptions)
+  resetSpinner() // dev server starts compiling automatically
+  const server = createDevServer(configDefaults)
   const compiler = server.locals.compiler
 
   // "invalid" doesn't mean the bundle is invalid, but that it is *invalidated*,
   // in other words, it's recompiling
-  compiler.plugin('invalid', () => {
+  compiler.hooks.invalid.tap('startAction', () => {
     output.clear()
     resetSpinner()
   })
@@ -56,13 +50,17 @@ export default async (args, context) => {
     gracefulDeath(httpHost, config, err)
   }
 
-  // Hold off on showing the spinner until compilation has started
-  compiler.plugin('compile', () => resetSpinner())
-
   // "done" event fires when Webpack has finished recompiling the bundle.
   // Whether or not you have warnings or errors, you will get this event.
 
-  compiler.plugin('done', stats => {
+  compiler.hooks.done.tap('startAction', stats => {
+    // TODO: DICSUSS
+    // Do we want to add backwards compatibility for part:@sanity/server/initializer?
+    // It is currently only used by @sanity/storybook. The way would do this is by
+    // creating a let variable (some like `firstCompile`). We would add an entry for the node
+    // compiler which calls all initializers and execute it here. After that set `firstCompile`
+    // to false.
+
     if (compileSpinner) {
       compileSpinner.succeed()
     }
@@ -163,11 +161,6 @@ async function ensureProjectConfig(context) {
   )
 
   output.print('Project ID / dataset configured')
-}
-
-function resolveStaticPath(rootDir, config) {
-  const {staticPath} = config
-  return path.isAbsolute(staticPath) ? staticPath : path.resolve(path.join(rootDir, staticPath))
 }
 
 function gracefulDeath(httpHost, config, err) {

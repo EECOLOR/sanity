@@ -1,6 +1,14 @@
 /* eslint-disable no-process-env */
 import {mergeWith} from 'lodash'
 
+/*
+  TODO: DISCUSS:
+
+  This utility function should not use values from `process.env`
+
+  Only CLI utils should have access to `process.env`.
+*/
+
 const sanityEnv = process.env.SANITY_ENV || 'production'
 const apiHosts = {
   staging: 'https://api.sanity.work',
